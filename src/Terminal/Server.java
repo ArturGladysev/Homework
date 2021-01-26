@@ -7,9 +7,9 @@ import java.net.*;
 
 
 
-public class Server {
-private Sender sender;
-    private FileOutputStream senderF;
+public class Server {          //Сервер должен запускаться КАК ДРУГАЯ ЕДИНИЦА ТРАНСЛЯЦИИ (например, через командную строку)
+private Sender sender;          // (В папке со скомпелированным сервером должны быть скомпелированные
+    private FileOutputStream senderF; //Sender и PinValidator - вспомогательные классы класса Server
     private ObjectOutputStream terminal_out;
    private  ObjectInputStream terminal_in;
  private final String pin_key = "7781";
@@ -96,8 +96,8 @@ public void testPin(Character ch) {                            //Валидац�
 
 
 
-    public void go() {                                     //Основной метод, отслеживает информацию с терминала, производит валидацию пин кода и
-      this.clientConnect();                                // обрабатывает запросы с терминала, вызывает методы сервера в зависимости от запроса
+    public void go() {                          //Основной метод, отслеживает информацию с терминала, производит валидацию пин кода и
+      this.clientConnect();                  // обрабатывает запросы с терминала, вызывает методы сервера в зависимости от запроса
  Object ob = null;
        try {
   while((ob = terminal_in.readObject())!= null) {
@@ -132,8 +132,8 @@ public void testPin(Character ch) {                            //Валидац�
 
     public void clientConnect() {
         try {
-                senderF = new FileOutputStream("E:/Artyr/studyjava/ProjectsServer/resourse/messages");
-                sender = new Sender(senderF);
+                senderF = new FileOutputStream("E:/Artyr/studyjava/ProjectsServer/resourse/messages"); //Необходимо указать корректный
+                sender = new Sender(senderF);                // путь к файлу, в этот фай будет передоваться информация об исключениях
             ServerSocket server_sock = new ServerSocket(4242);
             Socket terminal_sock = server_sock.accept();
             terminal_out = new ObjectOutputStream(terminal_sock.getOutputStream());

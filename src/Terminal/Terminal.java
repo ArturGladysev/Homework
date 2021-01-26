@@ -75,7 +75,7 @@ public void mainSleep() {                                                      /
         but.add(top_up);
         but.add(take_of);
         but.add(show);
-        //buttonBox.add(but);
+
 
         frame.getContentPane().add(panel);
         frame.setSize(200, 200);
