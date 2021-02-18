@@ -1,8 +1,8 @@
 package IteratorList;
 import java.util.*;
 
-    public class IteratorListV1 implements Iterator {   //Итератор использует индекс List для итерации и не является дженериком
-        private List list;
+    public class IteratorListV1 implements Iterator {   //Итератор использует индекс List для итерации и не является дженериком (row тип, просто
+        private List list;                               // для наглядности)
         private int index;
 
         public IteratorListV1(List list) {

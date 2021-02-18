@@ -87,7 +87,7 @@ private int capasity = 10; // заменить имя
         return map;
     }
 
-    public void toMap(Map<T , Integer> destination) {
+    public void toMap(Map<? super T, Integer> destination) {
         for (int i = 0; i < this.size; ++i) {
             int val = getCount((T)entry_o[i]);
             destination.put((T) entry_o[i], val);

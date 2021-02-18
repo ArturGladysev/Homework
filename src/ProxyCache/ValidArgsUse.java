@@ -10,8 +10,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface ValidArgsUse {             // Аннотация позволяет отключать аргументы, указывая их номера
 
-   public int onePar() default 0;
+    int onePar() default 0;
  int twoPar() default 0;
     int threePar() default 0;
+int fourPar() default 0;
+    int fivePar() default 0;
 
 }

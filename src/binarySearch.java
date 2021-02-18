@@ -1,7 +1,7 @@
 
 import java.util.Scanner;
 
-public class binarySearch {
+public class BinarySearch {
     public static Integer[] getSortArray(int size) {    //Метод получает массив заданного пользователем размера
         Integer[] sort_array = new Integer[size];       //со случайными значениями < 1000
         for(int i = 0; i<size; ++i) {
@@ -20,19 +20,21 @@ public class binarySearch {
     }
 
 
-    public static int myBinarySearch(Integer[] sort_mass, int val) { //Бинарный поиск
+    public static <T extends Comparable<? super T>> int  myBinarySearch(T[] sort_mass, T val) { //Бинарный поиск
         int first = 0;
         int last = sort_mass.length - 1;
         while(first <= last) {
             int bin = (first + last)/2;
-            if(sort_mass[bin] ==val)  {
+            T v = sort_mass[bin];
+            int res = v.compareTo(val);
+            if(res ==0)  {
                 return bin;
             }
-            else if (sort_mass[bin] < val) {
+            else if (res < 0 ) {
                 first = bin + 1;
 
             }
-            else if (sort_mass[bin] > val) {
+            else if (res > 0) {
                 last = bin - 1;
 
             }

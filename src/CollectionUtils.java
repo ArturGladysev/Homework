@@ -15,7 +15,7 @@ public class CollectionUtils {
     }
 
 
-    public static <T>int indexOf(List<T> source, T value) {
+    public static <T>int indexOf(List<? extends T> source, T value) {
     return source.indexOf(value);
     }
 
@@ -23,7 +23,7 @@ public class CollectionUtils {
       return source.subList(0 , size);
     }
 
-    public static <T>void add(List<T> source, T value) {
+    public static <T>void add(List<? super T> source, T value) {
     source.add(value);
     }
 

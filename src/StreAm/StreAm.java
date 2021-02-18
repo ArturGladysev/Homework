@@ -27,8 +27,9 @@ public class StreAm<T> {      //Класс хранит итератор , ко�
 
     public static <T> StreAm<T> of(InputStream in) {
         ArrayList<T> inputObjects = new ArrayList<>();
+       ObjectInputStream inPut = null;
         try {
-            ObjectInputStream inPut = new ObjectInputStream(in);
+             inPut = new ObjectInputStream(in);
             for (Object ob = inPut.readObject(); ; ob = inPut.readObject()) {
                 inputObjects.add((T) ob);
             }
@@ -37,9 +38,15 @@ public class StreAm<T> {      //Класс хранит итератор , ко�
             System.out.println("Достигнут конец файла");
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            try {
+                inPut.close();
+            } catch (IOException ec) {
+                System.out.println("Файл не может быть закрыт");
+                ec.printStackTrace();
+            }
         }
         return new StreAm<T>(inputObjects);
-
     }
 
 

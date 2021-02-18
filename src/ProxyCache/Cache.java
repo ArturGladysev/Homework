@@ -9,7 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)           // к файлу и установить допустимый размер хранения значений.
 public @interface Cache {
     boolean isSerialisable() default false;
-    String fileName() default "E:/Artyr/studyjava/ProjectsServer/resourse/m"; //Нужен Корректный путь к файлу
+    String fileName() default "C:/User/doc/text.txt"; //Нужен Корректный путь к файлу
 int maxSizeCacheValues() default 10000;
-//boolean addToZip() default false;
+ boolean addToZip() default false;
+String zipName () default  "C:/User/doc/zip_Files.zip";
 }

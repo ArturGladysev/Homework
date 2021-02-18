@@ -1,7 +1,7 @@
 package ProxyCache;
 
 public interface SumOfNumber {
-  @Cache( maxSizeCacheValues = 6)
+  @Cache
     int sumOfNumber(int one, int two);
 
   @Cache

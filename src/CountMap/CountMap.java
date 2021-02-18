@@ -16,7 +16,7 @@ public interface CountMap<T> {
 
     Map<T, Integer> toMap();
 
-    void toMap(Map<T, Integer> destination);
+    void toMap(Map<? super T, Integer> destination);
 
 }
 
