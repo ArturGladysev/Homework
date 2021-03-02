@@ -1,14 +1,19 @@
 package Shapes;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.util.Scanner;
-import javax.swing.*;
 
 
-public class Main {                                  // Позволяем пользовтелю ввести значения для фигур, инициализируем
-    private static JFrame frame;                     // экземпляры класса "потомки класса: Фигура" Создаем объект вложенного
-    private static Circle circle;                    // класса, наследника JPanel, и используем поля созданных объектов для рисованя
-    private static Square square;                    // фигур.
+
+// Позволяем пользовтелю ввести значения для фигур, инициализируем
+// экземпляры класса "потомки класса: Фигура" Создаем объект вложенного
+// класса, наследника JPanel, и используем поля созданных объектов для рисованя
+// фигур.
+public class Main {
+    private static JFrame frame;
+    private static Circle circle;
+    private static Square square;
     private static Rectangle rectangle;
     private static Triangle triangle;
     public static void main(String[] args) {

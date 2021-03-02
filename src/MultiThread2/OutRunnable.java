@@ -1,8 +1,11 @@
 package MultiThread2;
 
-public class OutRunnable implements Runnable {//Оболочка для таска, дающая возможность отследить - запустился таск или нет
-    public  volatile boolean isException = false;        //Так как ЭкзекьютСервис устанавливает статус потока - NEW
-    public  volatile boolean isWork = false;             // Так же хранит булеву переменную для возможности подсчета исключений
+//Оболочка для таска, дающая возможность отследить - запустился таск или нет
+//Так как ЭкзекьютСервис устанавливает статус потока - NEW
+// Так же хранит булеву переменную для возможности подсчета исключений
+public class OutRunnable implements Runnable {
+    public  volatile boolean isException = false;
+    public  volatile boolean isWork = false;
     private Runnable innerRun;
 
 

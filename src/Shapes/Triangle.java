@@ -1,7 +1,8 @@
 package Shapes;
 
-import java.awt.*;                                            //Класс треугольник, хранит три вершины треугольника и имя
+import java.awt.*;
 
+//Класс треугольник, хранит три вершины треугольника и имя
 public class Triangle extends Shape {
     private Point a_point;
     private Point b_point;

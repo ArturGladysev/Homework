@@ -1,10 +1,10 @@
 package MultiThread2;
 
 import java.util.concurrent.FutureTask;
-
+//Класс хранит состояния для отслеживания состояния потока
 public class MyFutureTask<T> extends FutureTask<T> {
 
-    public static enum StateTask {             //Класс хранит состояния для отслеживания состояния потока
+    public static enum StateTask {
         NEW,
         COMPLETED,
         WORK,
@@ -18,16 +18,17 @@ public class MyFutureTask<T> extends FutureTask<T> {
         return stateTask;
     }
 
-
-   OutRunnable outRunnable;                                      //Обертка для задачи
+    //Обертка для задачи
+   OutRunnable outRunnable;
 
     public MyFutureTask(OutRunnable runnable, T result) {
         super(runnable, result);
 outRunnable =  runnable;
     }
 
+    //Проверка - отменено выполнение или нет и установка значения по результату
     @Override
-    protected void done() {                        //Проверка - отменено выполнение или нет и установка значения по результату
+    protected void done() {
 
         if (this.isCancelled() == false) {
                stateTask = StateTask.COMPLETED;

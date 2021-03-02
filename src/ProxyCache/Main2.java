@@ -9,10 +9,10 @@ public class Main2 {
 
     public static void main(String[] args) {
         SumOfNumberImp sni = new SumOfNumberImp();
-        SumOfNumber snimp = CachedInvocationHendlerConcurrent.getProxyInstance(sni, "E:/Artyr/studyjava/ProjectsServer/resourse/m1");
+        SumOfNumber snimp = CachedInvocationHendlerConcurrent.getProxyInstance(sni, "resourse/cacheFiles/m5");
 
         MinImp m12 = new MinImp();
-        Min min12 = CachedInvocationHendlerConcurrent.getProxyInstance(m12 , "E:/Artyr/studyjava/ProjectsServer/resourse/m1");
+        Min min12 = CachedInvocationHendlerConcurrent.getProxyInstance(m12 , "resourse/cacheFiles/m5");
 
         Runnable task1 = new Runnable() {
             @Override

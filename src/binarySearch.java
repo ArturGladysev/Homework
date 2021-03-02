@@ -1,26 +1,31 @@
 
 import java.util.Scanner;
 
+
+//Метод получает массив заданного пользователем размера
+//со случайными значениями < 1000
 public class BinarySearch {
-    public static Integer[] getSortArray(int size) {    //Метод получает массив заданного пользователем размера
-        Integer[] sort_array = new Integer[size];       //со случайными значениями < 1000
+    public static Integer[] getSortArray(int size) {
+        Integer[] sort_array = new Integer[size];
         for(int i = 0; i<size; ++i) {
             sort_array[i] =(int) (Math.random()*1000);
         }
-        BubbleSort.sort_ins(sort_array);                 //Сортировка "пузырьком"
+        //Сортировка "пузырьком"
+        BubbleSort.sort_ins(sort_array);
         return sort_array;
     }
 
-
-    public static void testBinarySort( Integer[] sort_mass) {     //Метод ищет каждый элемент массива
-        for(int v : sort_mass) {                                 // бинарным поиском и возвращает его индекс
+    //Метод ищет каждый элемент массива
+    // бинарным поиском и возвращает его индекс
+    public static void testBinarySort( Integer[] sort_mass) {
+        for(int v : sort_mass) {
             int res = myBinarySearch(sort_mass, v);
             System.out.println("Element:" + Integer.toString(v) + " >" + "Position:" + Integer.toString(res));
         }
     }
 
-
-    public static <T extends Comparable<? super T>> int  myBinarySearch(T[] sort_mass, T val) { //Бинарный поиск
+    //Бинарный поиск
+    public static <T extends Comparable<? super T>> int  myBinarySearch(T[] sort_mass, T val) {
         int first = 0;
         int last = sort_mass.length - 1;
         while(first <= last) {

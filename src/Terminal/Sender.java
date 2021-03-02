@@ -1,7 +1,8 @@
 package Terminal;
 
-import java.io.OutputStream;          //Класс хранит объект outPutStream и записывает в этот поток информацию об исключениях
+import java.io.OutputStream;
 
+//Класс хранит объект outPutStream и записывает в этот поток информацию об исключениях
 public class Sender {
    private OutputStream sender;
 

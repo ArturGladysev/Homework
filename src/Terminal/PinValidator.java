@@ -1,6 +1,8 @@
 package Terminal;
 
-public class PinValidator {                 // Класс для валидации пин кода
+// Класс для валидации пин кода
+
+public class PinValidator {
 private boolean overflow = false;
     private boolean valid = false;
    private int count_success = 0;
@@ -30,7 +32,6 @@ private boolean overflow = false;
              ++count_failure;
        if (count_failure == 3) {
     overflow = true;
-           System.out.println("!!11");
        }
          if  (overflow == false) {throw new IllegalArgumentException("wrong number");}
         }

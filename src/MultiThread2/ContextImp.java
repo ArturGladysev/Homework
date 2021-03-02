@@ -1,15 +1,16 @@
 package MultiThread2;
 
-import java.util.*;
-import java.util.concurrent.*;
-
-public class ContextImp implements Context {       //Хранится и обрабатывается лист ФьючерТасков
+import java.util.List;
+//Хранится и обрабатывается лист ФьючерТасков
+public class ContextImp implements Context {
     private List<MyFutureTask> listFutureTask;
    int  callbackisDone = 0;
 
+    //Создаем поток для callback, который в фоновом режиме ожидает завершения всех отсальных
+    //задач и потом выполняется
 
-    public ContextImp(List<MyFutureTask> listFutureTask) {   //Создаем поток для callback, который в фоновом режиме ожидает завершения всех отсальных
-        this.listFutureTask = listFutureTask;                        //задач и потом выполняется
+   public ContextImp(List<MyFutureTask> listFutureTask) {
+        this.listFutureTask = listFutureTask;
 this.listFutureTask.remove(listFutureTask.size()-1);
         OutRunnable outRunnable = listFutureTask.get(listFutureTask.size()-1).outRunnable;
 OutRunnable callback = new OutRunnable(outRunnable) {
@@ -32,8 +33,9 @@ OutRunnable callback = new OutRunnable(outRunnable) {
 t.start();
     }
 
+    //Подсчет исключений
      @Override
-    public int getFailedTaskCount() {                            //Подсчет исключений
+    public int getFailedTaskCount() {
         int countExceptions = 0;
         for (MyFutureTask myFutureTask : listFutureTask) {
             if (myFutureTask.outRunnable.isException) {
@@ -43,9 +45,9 @@ t.start();
         return countExceptions;
     }
 
-
+    // Подсчет выполненных задач
     @Override
-    public int getCompletedTaskCount() {                         // Подсчет выполненных задач
+    public int getCompletedTaskCount() {
         int countComplete = 0;
         for (MyFutureTask myFutureTask : listFutureTask) {
             if (myFutureTask.getStateTask() != MyFutureTask.StateTask.WORK) {
@@ -58,9 +60,9 @@ t.start();
     }
 
 
-
+    //Подсчет отмененных задач
     @Override
-    public int getInterruptedTaskCount() {   //Подсчет отмененных задач
+    public int getInterruptedTaskCount() {
         int countInterraptTrue = 0;
         for (MyFutureTask myFutureTask : listFutureTask) {
             if (myFutureTask.isDone() == true) {
@@ -73,8 +75,9 @@ t.start();
         return countInterraptTrue;
     }
 
+    //Прерываем только те задачи, которые запущены
     @Override
-    public void interrapt() {                          //Прерываем только те задачи, которые запущены
+    public void interrapt() {
         for (MyFutureTask myFutureTask : listFutureTask) {
             if (myFutureTask.isDone() ==false) {
                if (myFutureTask.outRunnable.isWork == false) {

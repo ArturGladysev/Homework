@@ -5,19 +5,20 @@ package Terminal;
 import java.io.*;
 import java.net.*;
 
-
-
-public class Server {          //Сервер должен запускаться КАК ДРУГАЯ ЕДИНИЦА ТРАНСЛЯЦИИ (например, через командную строку)
-private Sender sender;          // (В папке со скомпелированным сервером должны быть скомпелированные
-    private FileOutputStream senderF; //Sender и PinValidator - вспомогательные классы класса Server
+//Сервер должен запускаться КАК ДРУГАЯ ЕДИНИЦА ТРАНСЛЯЦИИ (например, через командную строку)
+// (В папке со скомпелированным сервером должны быть скомпелированные
+//Sender и PinValidator - вспомогательные классы класса Server - папка -> resourse -> termibal -> server
+public class Server {
+private Sender sender;
+    private FileOutputStream senderF;
     private ObjectOutputStream terminal_out;
    private  ObjectInputStream terminal_in;
  private final String pin_key = "7781";
 private long balance = 10000l;
    private final PinValidator pin_validator = new PinValidator();
 
-
-   public void writeMessageToClient(String message) {                        //Метод для получения и отправки сообщений на терминал
+    //Метод для получения и отправки сообщений на терминал
+   public void writeMessageToClient(String message) {
       try {
           terminal_out.writeObject(message);
       } catch (IOException e) { sender.sendGetMessageException(e.toString());
@@ -27,8 +28,8 @@ private long balance = 10000l;
    public Long getBalance() {
       return balance;
   }
-
-public void upBalabce() {                                //Пополнить бланс
+    //Пополнить бланс
+public void upBalabce() {
     try {
         String ob = (String) terminal_in.readObject();
         Long l = Long.parseLong(ob);
@@ -46,8 +47,8 @@ public void upBalabce() {                                //Пополнить б
 }
 
 
-
-  public void takeBalance() {                                         //Снять средства
+    //Снять средства
+  public void takeBalance() {
     try {
         String ob = (String) terminal_in.readObject();
         Long l = Long.parseLong(ob);
@@ -66,14 +67,14 @@ public void upBalabce() {                                //Пополнить б
     } catch (IOException | ClassNotFoundException e) {sender.sendGetMessageException(e.toString()); }
     }
 
-
-    public void showBalance() {                                 //Показать баланс
+    //Показать баланс
+    public void showBalance() {
           String message_balance = "Current balance: " + Long.toString(balance);
           this.writeMessageToClient(message_balance);
 
    }
-
-public void testPin(Character ch) {                            //Валидация пин кода
+    //Валидация пин кода
+public void testPin(Character ch) {
     try {
         pin_validator.validation(pin_key, ch);
         if (pin_validator.isvalid()) {
@@ -94,10 +95,10 @@ public void testPin(Character ch) {                            //Валидац�
  }
 
 
-
-
-    public void go() {                          //Основной метод, отслеживает информацию с терминала, производит валидацию пин кода и
-      this.clientConnect();                  // обрабатывает запросы с терминала, вызывает методы сервера в зависимости от запроса
+//Основной метод, отслеживает информацию с терминала, производит валидацию пин кода и
+// обрабатывает запросы с терминала, вызывает методы сервера в зависимости от запроса
+    public void go() {
+      this.clientConnect();
  Object ob = null;
        try {
   while((ob = terminal_in.readObject())!= null) {
@@ -125,15 +126,17 @@ public void testPin(Character ch) {                            //Валидац�
        }
 
 
-
+    //Соединение с терминалом
     public static void main(String[] arg) {
         new Server().go();
-    }           //Соединение с терминалом
+    }
 
     public void clientConnect() {
+
+        //В этот фай будет передоваться информация об исключениях
         try {
-                senderF = new FileOutputStream("E:/Artyr/studyjava/ProjectsServer/resourse/messages"); //Необходимо указать корректный
-                sender = new Sender(senderF);                // путь к файлу, в этот фай будет передоваться информация об исключениях
+                senderF = new FileOutputStream("resourse/terminal/messages");
+                sender = new Sender(senderF);
             ServerSocket server_sock = new ServerSocket(4242);
             Socket terminal_sock = server_sock.accept();
             terminal_out = new ObjectOutputStream(terminal_sock.getOutputStream());

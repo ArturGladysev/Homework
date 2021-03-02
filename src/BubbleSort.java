@@ -1,9 +1,13 @@
 
 
+// Сортировка пузырьком: после каждой итерации вложенного цикла
+// "в этом случае" наибольший элемент перемещается в конец
+// массива, размер которого в предалах первого цикла уменьшается
+
 public class BubbleSort {
-    public static <T extends Comparable<? super T>>void sort_ins(T[] mas) { // Сортировка пузырьком: после каждой итерации вложенного цикла
-        int res = 0;                                                // "в этом случае" наибольший элемент перемещается в конец
-        for(int i = 0; i<mas.length-1; ++i) {                       // массива, размер которого в предалах первого цикла уменьшается
+    public static <T extends Comparable<? super T>>void sort_ins(T[] mas) {
+        int res = 0;
+        for(int i = 0; i<mas.length-1; ++i) {
             T one = (T) mas[i];
             T two = (T) mas[i+1];
             res = one.compareTo(two);

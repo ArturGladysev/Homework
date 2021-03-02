@@ -1,16 +1,16 @@
 package ProxyCache;
 
 public interface Min {
-    @Cache(isSerialisable = true, addToZip = true, fileName = "E:/Artyr/studyjava/ProjectsServer/resourse/m1",
-            zipName = "E:/Artyr/studyjava/ProjectsServer/resourse.zip")
+    @Cache(isSerialisable = true, addToZip = true, fileName = "resourse/cacheFiles/m3",
+            zipName = "resourse/cacheFiles/zipFiles/zipAr.zip")
     int min(int one, int two);
 
-    @Cache(isSerialisable = true,  fileName = "E:/Artyr/studyjava/ProjectsServer/resourse/m1")
+    @Cache(isSerialisable = true,  fileName = "resourse/cacheFiles/m6")
     int min(int one);
 
-    @Cache(isSerialisable = true , fileName = "E:/Artyr/studyjava/ProjectsServer/resourse/m1")
-    default void printNull() {
-        System.out.println("Zero");
+    @Cache(isSerialisable = true , fileName = "resourse/cacheFiles/m6")
+    default String printNull() {
+        return "Zero";
 
     }
 }

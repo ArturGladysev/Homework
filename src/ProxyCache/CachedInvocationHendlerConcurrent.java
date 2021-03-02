@@ -14,24 +14,19 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
 
 
     private volatile ObjectOutputStream writeFile = null;
-    private volatile boolean fileEmpty = true;
-    private volatile String fileName = "E:/Artyr/studyjava/ProjectsServer/resourse/m";
+    private volatile String fileName = "E:resourse/cacheFiles/m5";
     private volatile String metodName = "NoName";
-    private volatile String zipName = "E:/Artyr/studyjava/ProjectsServer/resourse.zip";
-    private volatile String previousZipName = "NoName";
-    private volatile boolean previousIsAddZip = false;
-    private volatile File zip = new File(zipName);
-    private volatile int countNames = 0;
-    private volatile ZipOutputStream zipOut = null;
     private volatile String prevMethodName = "NoName";
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private final Map<Pair, Object> resultsWorkMetods = new HashMap<Pair, Object>();
     private final Object delegate;
+    private volatile ZipHelper zipHelper = new ZipHelper();
+
 
     private CachedInvocationHendlerConcurrent(Object delegate) {
         this.delegate = delegate;
         try {
-            zipOut = new ZipOutputStream(new FileOutputStream(zip));
+            zipHelper.zipOut = new ZipOutputStream(new FileOutputStream(zipHelper.zip));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -41,7 +36,7 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
         this.delegate = delegate;
         this.fileName = fileName;
         try {
-            zipOut = new ZipOutputStream(new FileOutputStream(zip));
+            zipHelper.zipOut = new ZipOutputStream(new FileOutputStream(zipHelper.zip));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -62,20 +57,11 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         Object value = null;
-
-        if (args == null) {
-            args = new Object[1];
-            args[0] = (Object) new String("NotParam");
-        }
         try {
         if (!method.isAnnotationPresent(Cache.class)) {
             System.out.println("Метод без аннотации Cache");
-            if (args[0].equals((Object) "NotParam")) {
-                return method.invoke(delegate);
-            } else {
                 return method.invoke(delegate, args);
             }
-        }
         } catch (IllegalAccessException e2) {
             System.out.println("Неправильные аргументы метода, укажите в соответствии с сигнатурой");
             e2.printStackTrace();
@@ -91,7 +77,6 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
                 validArgsUseWork(method, key);
             }
 
-
                 boolean b = cacheAnnotation.isSerialisable();
                 if (b == true) {
                     return cacheToFile(method, args, key, cacheAnnotation);
@@ -106,7 +91,8 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
 
     private Object addOrGetValue(Method method, Object[] args, Pair<Method, Object> key, Cache cacheAnnotation) {
         Object value = null;
-        readWriteLock.writeLock().lock();                          //Первая блокировка при возврате\добавления значений в память
+        //Первая блокировка при возврате\добавления значений в память
+        readWriteLock.writeLock().lock();
             try {
 
                 for (Pair p : resultsWorkMetods.keySet()) {
@@ -116,12 +102,7 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
                     }
                 }
                 if (resultsWorkMetods.size() < cacheAnnotation.maxSizeCacheValues()) {
-                    if (args[0].equals((Object) "NotParam")) {
-                        value = method.invoke(delegate);
-                    }
-                  else {
                         value = method.invoke(delegate, args);
-                    }
                     resultsWorkMetods.put(key, value);
                     System.out.println("Добавлено кэш значение");
                 }
@@ -143,17 +124,20 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
         Object value = null;
         Map<String, Object> resultsWorkMetodsFile = new HashMap<>();
         ObjectInputStream readFile = null;
-        readWriteLock.writeLock().lock();                       //Блокировка позволяет пополнить архив, если это нужно, прочитать файл и\или
-       try {                                                     // записать новое значение
+        //Блокировка позволяет пополнить архив, если это нужно, прочитать файл и\или
+        // записать новое значение
+        readWriteLock.writeLock().lock();
+       try {
            if (!method.getName().equals(metodName)) {
-               changePath(cacheAnnotation.fileName(), method, previousZipName);
+               changePath(cacheAnnotation.fileName(), method, zipHelper.previousZipName);
            }
-           previousIsAddZip = cacheAnnotation.addToZip();
-           previousZipName = cacheAnnotation.zipName();
-           prevMethodName = method.getName();
+           zipHelper.previousIsAddZip = cacheAnnotation.addToZip();
+           zipHelper.previousZipName = cacheAnnotation.zipName();
+           zipHelper.prevMethodName = method.getName();
 
            try {
-               if (fileEmpty == false) {
+               File file = new File(fileName);
+               if(file.length()!=0) {
                    readFile = new ObjectInputStream(new FileInputStream(fileName));
                    for (String line = (String) readFile.readObject(); ; line = (String) readFile.readObject()) {
                        value = readFile.readObject();
@@ -175,12 +159,8 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
                        return resultsWorkMetodsFile.get(k);
                    }
                }
-               if (args[0].equals((Object) "NotParam")) {
-                   value = method.invoke(delegate);
-               } else {
-                   value = method.invoke(delegate, args);
-               }
 
+                   value = method.invoke(delegate, args);
                    writeFile.writeObject(key.toString());
                    if (value == null) {
                        writeFile.writeObject(null);
@@ -188,7 +168,6 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
                        writeFile.writeObject(value);
                    }
                    System.out.println("Добавлено кэш значение в файл");
-                   fileEmpty = false;
 
            } catch (NotSerializableException ei) {
                System.out.println("Файл не может быть сериализован");
@@ -208,43 +187,14 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
 
 
 
-    private void addtoZip(String preVzipName) {
-        try {
 
-            if (!preVzipName.equals(this.zipName)) {
-                zipName = preVzipName;
-                zip = new File(preVzipName);
-                zipOut = new ZipOutputStream(new FileOutputStream(zip));
-            }
-            ZipEntry e = new ZipEntry(prevMethodName + countNames + ".txt");
-            zipOut.putNextEntry(e);
-            FileReader fileReader = new FileReader(fileName);
-            Scanner scanner = new Scanner(fileReader);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                byte[] data = line.getBytes();
-                zipOut.write(data);
-            }
-            zipOut.closeEntry();
-            zipOut.close();
-            scanner.close();
-            fileReader.close();
-            ++countNames;
-            System.out.println("Добавлен в архив: " + zipName + " файл:" + prevMethodName + countNames + ".txt");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
     private void changePath(String name, Method method, String prevZipName) {
         if (method.getName().equals(metodName) == false) {
 
-            if (previousIsAddZip == true) {
-                addtoZip(prevZipName);
+            if (zipHelper.previousIsAddZip == true) {
+                zipHelper.addtoZip(prevZipName , this.fileName);
             }
         }
         if (name.equals(fileName) == false || writeFile == null) {
@@ -256,8 +206,6 @@ public class CachedInvocationHendlerConcurrent implements InvocationHandler {
                 System.out.println("Файл не найден, введите корректное имя файла");
                 e.printStackTrace();
             }
-
-
         }
         metodName = method.getName();
 

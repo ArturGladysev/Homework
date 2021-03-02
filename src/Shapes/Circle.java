@@ -1,6 +1,6 @@
 package Shapes;
-
-public class Circle extends Shape {                                        //Класс: круг - хранит радиус и имя
+//Класс: круг - хранит радиус и имя
+public class Circle extends Shape {
     private static final String NAME = "Circle";
   private double radius;
 

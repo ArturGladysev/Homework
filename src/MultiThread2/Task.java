@@ -2,11 +2,12 @@ package MultiThread2;
 
 import java.util.concurrent.*;
 
-
-
-public class Task<T>{                            // Класс возвращает результат задачи для других потоков, если он уже подсчитан одним из потоков
-    private Callable<T> callable;                // Если в методе get возникает исключение, исключение будет вызвано и в других потоках, которые
- private volatile T result;                      // вызывают метод get
+// Класс возвращает результат задачи для других потоков, если он уже подсчитан одним из потоков
+// Если в методе get возникает исключение, исключение будет вызвано и в других потоках, которые
+// вызывают метод get
+public class Task<T>{
+    private Callable<T> callable;
+ private volatile T result;
   private volatile boolean isResult = false;
 boolean isException = false;
 

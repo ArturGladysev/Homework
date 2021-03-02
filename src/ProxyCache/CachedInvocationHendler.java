@@ -11,25 +11,21 @@ import java.util.zip.*;
 
 public class CachedInvocationHendler implements InvocationHandler {
 
-    protected ObjectOutputStream writeFile = null;                                           // Поток для записи объектов в файл
-    protected boolean fileEmpty = true;                                     // Флаг для гарантии, что при первом вызове Invoke не обратится к пустому файлу
-    protected final Map<Pair, Object> resultsWorkMetods = new HashMap<Pair, Object>(); // Хранит ключ - Pair(Метод+массив аргументов) / значение метода
-    protected final Object delegate;                                                      // Объект , методы которого вызываются
- protected String fileName = "C/User/doc/text.txt";
- protected String metodName = "NoName";
-    protected String zipName = "C/User/doc/zip.zip";
-    protected String previousZipName = "NoName";
-    protected boolean previousIsAddZip = false;
-    protected File zip = new File(zipName);
-   protected int countNames = 0;                                              //Счетчик для генерации уникальных имен внутри архива
-    protected ZipOutputStream zipOut = null;
-    protected String prevMethodName = "NoName";
+    // Поток для записи объектов в файл
+    private ObjectOutputStream writeFile = null;
+    // Хранит ключ - Pair(Метод+массив аргументов) / значение метода
+    private final Map<Pair, Object> resultsWorkMetods = new HashMap<Pair, Object>();
+    private final Object delegate;
+ private String fileName = "resourse/cacheFiles/m";
+ private String metodName = "NoName";
+    private String prevMethodName = "NoName";
+ZipHelper zipHelper = new ZipHelper();
 
 
     protected CachedInvocationHendler(Object delegate) {
         this.delegate = delegate;
         try {
-            zipOut = new ZipOutputStream(new FileOutputStream(zip));
+            zipHelper.zipOut = new ZipOutputStream(new FileOutputStream(zipHelper.zip));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -39,31 +35,32 @@ public class CachedInvocationHendler implements InvocationHandler {
         this.delegate = delegate;
         this.fileName = fileName;
         try {
-            zipOut = new ZipOutputStream(new FileOutputStream(zip));
+            zipHelper.zipOut = new ZipOutputStream(new FileOutputStream(zipHelper.zip));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
 
-    protected void changePath(String name, Method method, String prevZipName) {   //Метод меняет файл если поток для записи используется впервые или имя файла для
-        if (method.getName().equals(metodName) == false) {                     //метода сменилось "через аннотацию"
-                                                                              //Добавляет файл в архив при вызове метода с другим именем, если
-            if (previousIsAddZip == true) {                                         // установлен флаг isAddToZip в анотации Cache
-                addtoZip(prevZipName);
+    //Метод меняет файл если поток для записи используется впервые или имя файла для
+    //метода сменилось "через аннотацию"
+    //Добавляет файл в архив при вызове метода с другим именем, если
+    // установлен флаг isAddToZip в анотации Cache
+    protected void changePath(String name, Method method, String prevZipName) {
+        if (method.getName().equals(metodName) == false) {
+
+            if (zipHelper.previousIsAddZip == true) {
+                zipHelper.addtoZip(prevZipName , this.fileName);
             }
         }
         if (name.equals(fileName) == false || writeFile == null) {
             fileName = name;
             try {
-                writeFile = new ObjectOutputStream(new FileOutputStream(fileName));
-
+                writeFile = new ObjectOutputStream(new FileOutputStream(fileName, true));
             } catch (IOException e) {
                 System.out.println("Файл не найден, введите корректное имя файла");
                 e.printStackTrace();
             }
-
-
         }
         metodName = method.getName();
 
@@ -82,34 +79,30 @@ public class CachedInvocationHendler implements InvocationHandler {
     }
 
 
+    //Проверка аргументов, по которым определяется уникальность хранимого значения
+    //Метод использует булев массив, хранимый в объекте Pair, его значения учавствуют
+    // в генерации ключа для хранения значения
+    //Проверка наличия аннотаций, если метод должен серилиазоваться, вызов
+    // метода для записи/чтения в файл
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)  {
      Object value = null;
-      try {                                                                   //Если у метода нет аргументов, добавляем аргумент-метку, что нужно для корректной
-        if (args == null) {                                                   //генерации значения
- args = new Object[1];
-  args[0] = (Object) new String("NotParam");
-}
-        if (!method.isAnnotationPresent(Cache.class)) {                   //Проверка флага кэширования, при отсутствии - вызов метода
+      try {
+        if (!method.isAnnotationPresent(Cache.class)) {
             System.out.println("Метод без аннотации Cache");
-            if (args[0].equals((Object)"NotParam" )) {
-                return method.invoke(delegate);
+           return method.invoke(delegate, args);
             }
-            else {return method.invoke(delegate, args);}
-        }
-
         Pair<Method, Object> key = new Pair<Method, Object>(method, args);
-        if (method.isAnnotationPresent(ValidArgsUse.class)){                //Проверка аргументов, по которым определяется уникальность хранимого значения
-             validArgsUseWork(method, key);                                //Метод использует булев массив, хранимый в объекте Pair, его значения учавствуют
-        }                                                                   // в генерации ключа для хранения значения
+
+        if (method.isAnnotationPresent(ValidArgsUse.class)){
+             validArgsUseWork(method, key);
+        }
         Cache cacheAnnotation = method.getAnnotation(Cache.class);
 
-
-      boolean b = cacheAnnotation.isSerialisable();                           //Проверка наличия аннотаций, если метод должен серилиазоваться, вызов
-        if (b == true) {                                                       // метода для записи/чтения в файл
+      boolean b = cacheAnnotation.isSerialisable();
+        if (b == true) {
             return cacheToFile(method, args, key, cacheAnnotation );
         }
-
         value = addOrGetValue(method , args, key , cacheAnnotation);
 
       } catch (IllegalAccessException e2) {
@@ -125,24 +118,19 @@ public class CachedInvocationHendler implements InvocationHandler {
       }
 
 
-
+    //Поиск ключа для данного метода с текущим значением в кэше
+    // если ничего не найдено, добавление в кэш
       protected Object addOrGetValue(Method method, Object[] args, Pair<Method, Object> key, Cache cacheAnnotation) {
-   Object value = null;
+        Object value = null;
         try {
-    for (Pair p : resultsWorkMetods.keySet()) {                      //Поиск ключа для данного метода с текущим значением в кэше
-        if (p.equals(key)) {                                         // если ничего не найдено, добавление в кэш
+    for (Pair p : resultsWorkMetods.keySet()) {
+        if (p.equals(key)) {
             System.out.println("Вернулось кэш значение");
             return resultsWorkMetods.get(p);
         }
     }
-
     if (resultsWorkMetods.size() < cacheAnnotation.maxSizeCacheValues()) {
-        if (args[0].equals((Object) "NotParam")) {
-            value = method.invoke(delegate);
-        }
-        else {
             value = method.invoke(delegate, args);
-        }
         resultsWorkMetods.put(key, value);
         System.out.println("Добавлено кэш значение");
     }
@@ -155,12 +143,11 @@ public class CachedInvocationHendler implements InvocationHandler {
         return value;
 }
 
-
-
-    protected void validArgsUseWork(Method method, Pair<Method, Object> key) {   //Игнорирование аргументов для определения уникальности
-       if (key.listArgs.get(0).equals((Object)"NotParam")) {                   //Добавляет в строку генерируемого ключа - false или true
-           return;                                                            // для каждого аргумента
-       }
+//Игнорирование аргументов для определения уникальности
+//Добавляет в строку генерируемого ключа - false или true
+// для каждого аргумента
+    protected void validArgsUseWork(Method method, Pair<Method, Object> key) {
+       if (key.listArgs == null) {return;}
         ValidArgsUse validAnnotation = method.getAnnotation(ValidArgsUse.class);
         Integer[] validArgsParam = {validAnnotation.onePar(), validAnnotation.twoPar(), validAnnotation.threePar(), validAnnotation.fourPar()
         , validAnnotation.fivePar()};
@@ -174,54 +161,30 @@ public class CachedInvocationHendler implements InvocationHandler {
     }
 
 
-   protected void addtoZip(String preVzipName) {           //Создает новый архив, если этого требует аннотация нового метода, если архив для нового и
-      try {                                                    //вызванного/ных метода/ов ранее одинаков, создает внутри новый файл
-
-if (!preVzipName.equals(this.zipName)){
-             zipName = preVzipName;
-              zip = new File(preVzipName);
-              zipOut = new ZipOutputStream(new FileOutputStream(zip));
-          }
-       ZipEntry e = new ZipEntry(prevMethodName + countNames +".txt");
-       zipOut.putNextEntry(e);
-       FileReader  fileReader = new FileReader(fileName);
-       Scanner scanner = new Scanner(fileReader);
-       while (scanner.hasNextLine()) {
-           String line = scanner.nextLine();
-           byte[] data = line.getBytes();
-           zipOut.write(data);
-       }
-       zipOut.closeEntry();
-       zipOut.close();
-   scanner.close();
-   fileReader.close();
-      ++countNames;
-          System.out.println("Добавлен в архив: " + zipName + " файл:" + prevMethodName + countNames +".txt");
-      } catch (FileNotFoundException e) {
-          e.printStackTrace();
-      } catch (IOException e) {
-          e.printStackTrace();
-      }
-
-   }
-
-
-    protected Object cacheToFile(Method method, Object[] args , Pair<Method, Object> key, Cache cacheAnnotation ) {   //Кэширование в файл
-        if (!method.getName().equals(metodName)) {
-            changePath(cacheAnnotation.fileName(), method, previousZipName) ; // Смена выходного потока, если файл для записи сменился и архивирование
-        }
-        previousIsAddZip = cacheAnnotation.addToZip();                    //Все три поля запоминают информацию о предыдущем методе, чтобы корректно добавить
-        previousZipName = cacheAnnotation.zipName();                          // имя архив, запомнить флаг addToZip, и имя метода, чтобы узнать, что метод сменился
-        prevMethodName = method.getName();                                      // и необходимо добавить файл в архив.
-
-         Object value = null;
+    //Кэширование в файл
+    // Смена выходного потока, если файл для записи сменился и архивирование
+    //Все три поля "previos.." запоминают информацию о предыдущем методе, чтобы корректно добавить
+    // имя архив, запомнить флаг addToZip, и имя метода, чтобы узнать, что метод сменился
+    // и необходимо добавить файл в архив.
+    //....Поиск ключа, если true - возврат из кэша, false - записть в файл
+    protected Object cacheToFile(Method method, Object[] args , Pair<Method, Object> key, Cache cacheAnnotation ) {
+        Object value = null;
         Map<String, Object> resultsWorkMetodsFile = new HashMap<>();
         ObjectInputStream readFile = null;
+
+        if (!method.getName().equals(metodName)) {
+            changePath(cacheAnnotation.fileName(), method, zipHelper.previousZipName) ;
+        }
+        zipHelper.previousIsAddZip = cacheAnnotation.addToZip();
+        zipHelper.previousZipName = cacheAnnotation.zipName();
+        zipHelper.prevMethodName = method.getName();
+
 try {
-            if (fileEmpty == false) {
-                 readFile = new ObjectInputStream(new FileInputStream(fileName));    // Файл хранит уникальный для метода ключ
+                File file = new File(fileName);
+                if(file.length()!=0) {
+                 readFile = new ObjectInputStream(new FileInputStream(fileName));
                 for (String line = (String) readFile.readObject(); ; line = (String) readFile.readObject()) {
-                    value = readFile.readObject();                            //Чтение файла  и записть ключа/значения в Map
+                    value = readFile.readObject();
                     resultsWorkMetodsFile.put(line, value);
                 }
             }
@@ -231,7 +194,7 @@ try {
             e.printStackTrace();
         }
                 try {
-                    Set<String> sk = resultsWorkMetodsFile.keySet();      //Поиск ключа, если true - возврат из кэша, false - записть в файл
+                    Set<String> sk = resultsWorkMetodsFile.keySet();
                     for (String k : sk) {
             if (k.equals(key.toString())) {
                    String kk = k;
@@ -239,29 +202,20 @@ try {
                         return resultsWorkMetodsFile.get(k);
             }
         }
-                    if (args[0].equals((Object)"NotParam" )) {
-                        value = method.invoke(delegate);
-                    }
-                   else {
                         value = method.invoke(delegate, args);
-                    }
             writeFile.writeObject(key.toString());
             if (value == null) {
                 writeFile.writeObject(null);
             }
             else { writeFile.writeObject(value); }
             System.out.println("Добавлено кэш значение в файл");
-         fileEmpty = false;
-
                 } catch (NotSerializableException ei) {
                     System.out.println("Файл не может быть сериализован");
                     ei.printStackTrace();
-
                 }
          catch (IOException eio) {
                     System.out.println("Файл не неайден, введите корректное имя файла");
             eio.printStackTrace();
-
         } catch (Exception e) {
             e.printStackTrace();
         }

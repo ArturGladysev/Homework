@@ -2,11 +2,13 @@ package ProxyCache;
 
 public interface Concat {
 
-    @Cache(isSerialisable = true , fileName = "E:/Artyr/studyjava/ProjectsServer/resourse/m1")  //Тестовый метод, обычный конкат строк.
+    //Тестовый метод, обычный конкат строк.
+    @Cache(isSerialisable = true , fileName = "resourse/cacheFiles/m")
     String concat(String one, String two);
 
-    @Cache(isSerialisable = true , addToZip = true, fileName = "E:/Artyr/studyjava/ProjectsServer/resourse/m1")
-    @ValidArgsUse(onePar = 2, threePar = 3)                                                      // Игнорирование второго и третьего артументов
+    @Cache(isSerialisable = true , addToZip = true, fileName = "resourse/cacheFiles/m")
+    // Игнорирование второго и третьего артументов
+    @ValidArgsUse(onePar = 2, threePar = 3)
     String concat( String one, String two, String three);
 
     default  void printNull() {

@@ -2,8 +2,8 @@ package ProxyCache;
 
 import java.util.Arrays;
 import java.util.List;
-
-public class CreateListImp implements CreateList {                // Тестовый класс, возвращающий Лист
+// Тестовый класс, возвращающий Лист
+public class CreateListImp implements CreateList {
 
     @Override
     public List<Integer> createList() {

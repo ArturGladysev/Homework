@@ -59,9 +59,9 @@ return list.subList(min_ind, max_ind);
     }
 
 
-
+    //метод newArrayList()
     public static void main(String[] args) {
-         List<Integer> list_one = newArrayList();    //метод newArrayList()
+         List<Integer> list_one = newArrayList();
         List<Number> list_two = newArrayList();
      list_one.add(1);
         list_one.add(2);

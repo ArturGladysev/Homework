@@ -12,9 +12,10 @@ public class ScallarPoolThread implements ThreadPool{
     private volatile int minSize;
     private volatile int maxSize;
     private volatile int workThreadSize;
-
-    public class PoolThread extends Thread {        //Класс-поток использует переменную isСancel для отмены, выходит во внешний цикл и проверяет
-        public volatile boolean isCancel = false;   // - не нужно ли ему выйти в работу, предоставляет возможность поработать другим потокам
+    //Класс-поток использует переменную isСancel для отмены, выходит во внешний цикл и проверяет
+    // - не нужно ли ему выйти в работу, предоставляет возможность поработать другим потокам
+    public class PoolThread extends Thread {
+        public volatile boolean isCancel = false;
        public volatile boolean isTask = false;
         @Override
         public void run() {
@@ -46,10 +47,10 @@ public class ScallarPoolThread implements ThreadPool{
         }
     }
 
-
-
-    public ScallarPoolThread(int min, int max) {            //Создается список потоков максимального размера, если не будет задач в очереди,
-        threadsData = new ArrayList<PoolThread>();          // кол-во рабочих потоков будет постепенно сокращаться до минимального.
+    //Создается список потоков максимального размера, если не будет задач в оче реди,
+// кол-во рабочих потоков будет постепенно сокращаться до минимального.
+    public ScallarPoolThread(int min, int max) {
+        threadsData = new ArrayList<PoolThread>();
         for(int i = 0; i<max; ++i) {
             threadsData.add(new PoolThread());
         }
@@ -58,8 +59,8 @@ public class ScallarPoolThread implements ThreadPool{
         this.workThreadSize = max;
     }
 
-
-    @Override                                                   // Запуск потоков
+    // Запуск потоков
+    @Override
     public void start() {
         for (PoolThread poolThread : threadsData) {
             poolThread.start();
@@ -67,10 +68,11 @@ public class ScallarPoolThread implements ThreadPool{
 
     }
 
-
+    //Добавление задачи в список задач, если все потоки заняты - флаг isTask,то возаращается
+    // один из отмененных потоков в работу
    @Override
-    public void execute(Runnable runnable) {        //Добавление задачи в список задач, если все потоки заняты - флаг isTask,то возаращается
-                                                           // один из отмененных потоков в работу
+    public void execute(Runnable runnable) {
+
        synchronized (runnables) {
            runnables.add(runnable);
        }
@@ -143,8 +145,8 @@ public class ScallarPoolThread implements ThreadPool{
         }
 
 
-
-        public void cancel () {                //Отменяет потоки если кол-во потоков в работе равно миниимальному
+    //Отменяет потоки если кол-во потоков в работе равно миниимальному
+        public void cancel () {
         if(workThreadSize == minSize) {
             isRun = false;
         }

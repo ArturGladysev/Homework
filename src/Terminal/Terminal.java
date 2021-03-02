@@ -24,18 +24,20 @@ public class Terminal {
     private JButton enter_pin;
     private EnterPinListener pin_listener = new EnterPinListener();
 
-    public void go() {                                                       //Запуск основных методов
+    //Запуск основных методов
+    public void go() {
         connectServer();
         buildGUI();
     }
-
-public void mainSleep() {                                                      //Метод для блокировки потока
+    //Метод для блокировки потока
+public void mainSleep() {
         try {
             Thread.sleep(10000);
         }catch (InterruptedException e) {e.printStackTrace(); }
 }
 
-    public void connectServer() {                                                    //Настройка соеденения с сервером
+//Настройка соеденения с сервером
+    public void connectServer() {
     try {
         Socket sock = new Socket("127.0.0.1", 4242);
         server_out = new ObjectOutputStream(sock.getOutputStream());
@@ -45,7 +47,8 @@ public void mainSleep() {                                                      /
     }
 }
 
-    public void buildGUI() {                                                             //Постороение графического интерфейса
+//Постороение графического интерфейса
+    public void buildGUI() {
         frame = new JFrame("Терминал");
 
         JButton top_up = new JButton("Пополнить баланс");
@@ -89,7 +92,8 @@ public void mainSleep() {                                                      /
         }
     }
 
-    public class EnterPinListener implements ActionListener {                              //Слушатели для кнопок
+    //Слушатели для кнопок
+    public class EnterPinListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent ev) {
             in_message.setText("Введите пин код: ");
@@ -157,8 +161,8 @@ public void mainSleep() {                                                      /
         new Terminal().go();
     }
 
-
-    public final class LengthRestrictedDocument extends PlainDocument {                 //Метод для ограничения кол-ва символов в JTextfield
+    //Метод для ограничения кол-ва символов в JTextfield
+    public final class LengthRestrictedDocument extends PlainDocument {
 
         private final int limit;
 
@@ -175,7 +179,9 @@ public void mainSleep() {                                                      /
             }
         }
     }
-    public class ReaderMessage implements Runnable {                           // Поток для отслеживания сообщений с сервера
+
+    // Поток для отслеживания сообщений с сервера
+    public class ReaderMessage implements Runnable {
         Object ob = null;
         @Override
         public void run() {

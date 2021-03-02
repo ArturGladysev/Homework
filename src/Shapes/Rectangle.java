@@ -1,6 +1,6 @@
 package Shapes;
-
-public class Rectangle extends Shape{                            //Класс: Прямоугольник - хранит значение длинны и ширины
+//Класс: Прямоугольник - хранит значение длинны и ширины
+public class Rectangle extends Shape{
     private static final String NAME = "Rectangle";
  private double length;
     private double width;

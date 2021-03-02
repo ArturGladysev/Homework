@@ -1,6 +1,7 @@
 package Shapes;
 
-public class Square extends Shape {                     //Класс: Квадрат - хранит длинну ребра и имя
+//Класс: Квадрат - хранит длинну ребра и имя
+public class Square extends Shape {
     private static final String NAME = "Square";
     private double side;
 
