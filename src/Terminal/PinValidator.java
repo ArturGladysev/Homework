@@ -2,45 +2,59 @@ package Terminal;
 
 // Класс для валидации пин кода
 
-public class PinValidator {
-private boolean overflow = false;
+public class PinValidator
+{
+    private boolean overflow = false;
+
     private boolean valid = false;
-   private int count_success = 0;
-   private int count_failure = 0;
 
-  public boolean isOverflow () {
-      if (overflow==false) {
-          return overflow;
-      } else {
-          count_failure = 0;
-          overflow = false;
-          return true;
-      }
-  }
+    private int countSuccess = 0;
 
-   public boolean isvalid() {
-       return valid;
-   }
+    private int countFailure = 0;
 
-    public void validation(final String key, Character simbol) {
-        System.out.println("xx" + count_failure);
-        if (!Character.isDigit(simbol)) {
+    public boolean isOverflow()
+    {
+        if(overflow == false)
+        {
+            return overflow;
+        }
+        else
+        {
+            countFailure = 0;
+            overflow = false;
+            return true;
+        }
+    }
+
+    public boolean isValid()
+    {
+        return valid;
+    }
+
+    public void validation(final String key, Character sign)
+    {
+        System.out.println("xx" + countFailure);
+        if(!Character.isDigit(sign))
+        {
             throw new IllegalArgumentException("The character is not a number, please enter a number");
         }
-      if (!simbol.equals(key.charAt(count_success))) {
-             count_success = 0;
-             ++count_failure;
-       if (count_failure == 3) {
-    overflow = true;
-       }
-         if  (overflow == false) {throw new IllegalArgumentException("wrong number");}
+        if(!sign.equals(key.charAt(countSuccess)))
+        {
+            countSuccess = 0;
+            ++countFailure;
+            if(countFailure == 3)
+                overflow = true;
+            if(overflow == false)
+                throw new IllegalArgumentException("wrong number");
         }
-        else if (simbol.equals(key.charAt(count_success))) {
-            ++count_success;
-            if (count_success == key.length()) {
-                valid = true;
-             return;
+        else
+            {
+                ++countSuccess;
+                if(countSuccess == key.length())
+                {
+                    valid = true;
+                    return;
+                }
             }
-        }
     }
 }

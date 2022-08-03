@@ -1,5 +1,11 @@
 package Refactoring;
 
+/* Задача заключалась в рефакторинге сильно связанного кода с
+   неудачно подобранными именами переменных. Результат рефакторинга: классы
+   взаимодействуют через абстракции, использованы паттерны проектирования:
+   Command и State.
+*/
+
 public class Main {
     public static void main(String[] args) {
         Tractor tractor = new Tractor(new Position(10, 10), Orientation.NORTH);

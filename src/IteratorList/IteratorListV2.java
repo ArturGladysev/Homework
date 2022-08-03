@@ -2,33 +2,43 @@ package IteratorList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
-public class IteratorListV2<T> implements Iterator<T> {   //Итератор использует нтерфейс ListIterator, дженерик
-    private ListIterator<T> listIt;
+//Класс использует интерфейс ListIterator для итерации, дженерик
+public class IteratorListV2<T> implements Iterator<T>
+{
+    private ListIterator<T> listIterator;
 
-    public IteratorListV2(List<T> list) {
-        listIt = list.listIterator();
-     while (listIt.hasNext()) {
-         listIt.next();
-     }
-     }
+    public IteratorListV2(List<T> list)
+    {
+        listIterator = list.listIterator();
+        while(listIterator.hasNext())
+        {
+            listIterator.next();
+        }
+    }
 
     @Override
-    public boolean hasNext() {
-        if(listIt.hasPrevious()) {
+    public boolean hasNext()
+    {
+        if(listIterator.hasPrevious())
+        {
             return true;
         }
         return false;
     }
 
     @Override
-    public T next() {
-        if (hasNext()) {
-            return (T)listIt.previous();
+    public T next()
+    {
+        if(!hasNext())
+        {
+            throw new NoSuchElementException();
         }
-        return null;
-
-
+        else
+        {
+            return (T)listIterator.previous();
+        }
     }
 }
 

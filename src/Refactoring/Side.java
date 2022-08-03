@@ -1,6 +1,8 @@
 package Refactoring;
 
-public interface Side {
-    public Orientation turn();
-public Position move(Position p);
+public interface Side
+{
+     Orientation turn();
+
+     Position move(Position p);
 }

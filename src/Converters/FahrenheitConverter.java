@@ -1,9 +1,11 @@
 package Converters;
 
-public class FahrenheitConverter implements Converter {
+public class FahrenheitConverter extends Converter {
 
     @Override
-    public double convertValue(double value) {
-        return 1.8 * value + 32;
+    public double convertValue(double celsiusValue) {
+
+        this.setCelsiusValue(celsiusValue);
+        return 1.8 * celsiusValue + 32;
     }
 }

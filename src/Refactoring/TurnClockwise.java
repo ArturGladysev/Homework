@@ -2,7 +2,7 @@ package Refactoring;
 
 public class TurnClockwise implements Command{
     @Override
-    public void excute(Tractor tractor) {
+    public void execute(Tractor tractor) {
         tractor.setOrientation(tractor.getOrientation().turn());
     }
 }

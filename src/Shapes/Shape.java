@@ -1,8 +1,18 @@
 package Shapes;
 
+public abstract class Shape
+{
+    private String name;
 
- //Абстрактный класс для фигур потомков с двумя абстрактными методами
-public abstract class Shape {
-    public abstract String getName();
+    public String getName()
+    {
+        return name;
+    }
+
+    protected void setName(String name)
+    {
+        this.setName(name);
+    }
+
     public abstract double getArea();
 }

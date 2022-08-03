@@ -1,46 +1,49 @@
 package Refactoring;
 
-
-public class Tractor {
-
+public class Tractor
+{
     private Position position;
-    private Orientation orientation = Orientation.NORTH;
 
-    public Position getPosition() {
+    private Orientation orientation;
+
+    public Position getPosition()
+    {
         return position;
     }
 
-    public void setPosition(Position position) {
+    public void setPosition(Position position)
+    {
         this.position = position;
     }
 
-    public void setOrientation(Orientation orientation) {
+    public void setOrientation(Orientation orientation)
+    {
         this.orientation = orientation;
     }
 
-    public Tractor(Position position, Orientation orientation) {
+    public Tractor(Position position, Orientation orientation)
+    {
         this.position = position;
         this.orientation = orientation;
     }
 
-    public void move(Command command) {
-        command.excute(this);
-
+    public void move(Command command)
+    {
+        command.execute(this);
     }
 
-    public int getPositionX() {
+    public int getPositionX()
+    {
         return position.getX();
     }
 
-    public int getPositionY() {
+    public int getPositionY()
+    {
         return position.getY();
     }
 
-    public Orientation getOrientation() {
+    public Orientation getOrientation()
+    {
         return orientation;
-
     }
-
-
-
 }

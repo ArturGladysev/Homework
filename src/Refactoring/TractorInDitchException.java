@@ -1,7 +1,9 @@
 package Refactoring;
 
-public class TractorInDitchException extends RuntimeException {      //Собстенное исключение
-    public TractorInDitchException (String message) {
+public class TractorInDitchException extends RuntimeException
+{
+    public TractorInDitchException(String message)
+    {
         super(message);
     }
 }

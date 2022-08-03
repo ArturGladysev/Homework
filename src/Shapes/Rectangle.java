@@ -1,38 +1,41 @@
 package Shapes;
-//Класс: Прямоугольник - хранит значение длинны и ширины
-public class Rectangle extends Shape{
-    private static final String NAME = "Rectangle";
- private double length;
+
+public class Rectangle extends Shape
+{
+    private double length;
+
     private double width;
 
-public Rectangle(double length, double width) {
-    setLength(length);
-     setWidth(width);
-}
-
-    @Override
-    public String getName() {
-        return NAME;
+    public Rectangle(double length, double width)
+    {
+        setName("Rectangle");
+        setLength(length);
+        setWidth(width);
     }
 
     @Override
-    public double getArea() {
+    public double getArea()
+    {
         return length * width;
     }
 
-public void setLength(double length) {
-    this.length = length;
-}
-    public void setWidth(double width) {
+    public void setLength(double length)
+    {
+        this.length = length;
+    }
+
+    public void setWidth(double width)
+    {
         this.width = width;
     }
 
-    public double getLength() {
+    public double getLength()
+    {
         return length;
     }
 
-    public double getWidth() {
+    public double getWidth()
+    {
         return width;
     }
-
 }

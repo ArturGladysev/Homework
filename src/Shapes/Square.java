@@ -1,36 +1,28 @@
 package Shapes;
 
-//Класс: Квадрат - хранит длинну ребра и имя
-public class Square extends Shape {
-    private static final String NAME = "Square";
+public class Square extends Shape
+{
     private double side;
 
-    public Square(double side) {
+    public Square(double side)
+    {
+        setName("Square");
         setSide(side);
     }
 
-
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public double getArea() {
+    public double getArea()
+    {
         return side * side;
     }
 
-
-
-
-    public double getSide() {
+    public double getSide()
+    {
         return side;
-}
-
-    public void setSide(double side) {
-        this.side = side;
     }
 
-
-
+    public void setSide(double side)
+    {
+        this.side = side;
+    }
 }

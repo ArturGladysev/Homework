@@ -4,39 +4,48 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+/*
+Задача: написать итератор, принимающий List, но перебирающий элементы в обратном порядке.
+ */
+
 public class Main {
+    public static void main(String[] args)
+    {
+        String[] stringArray = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+        ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(stringArray));
+        LinkedList<String> linkedList = new LinkedList<String>(Arrays.asList(stringArray));
+        IteratorListV1 iteratorV1FromArrayList = new IteratorListV1(arrayList);
+        IteratorListV1 iteratorV1FromLinkedList = new IteratorListV1(linkedList);
 
-    public static void main(String[] args) {
-        String[] one_mas = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
-        ArrayList<String> array = new ArrayList<String>(Arrays.asList(one_mas));
-        LinkedList<String> link = new LinkedList<String>(Arrays.asList(one_mas));
-        IteratorListV1 it_array = new IteratorListV1(array);
-        IteratorListV1 it_link = new IteratorListV1(link);
-
-        System.out.println("Array reverse one variant: ");
-        while (it_array.hasNext()) {
-            String word = (String) it_array.next();
-            System.out.println(word + " ");
+        String value;
+        System.out.println("ArrayList reverse by IteratorListV1 variant: ");
+        while(iteratorV1FromArrayList.hasNext())
+        {
+            value = (String)iteratorV1FromArrayList.next();
+            System.out.println(value + " ");
         }
-        System.out.println("Linked reverse one variant: ");
-        while (it_link.hasNext()) {
-            String word2 = (String) it_link.next();
-            System.out.println(word2 + " ");
 
+        System.out.println("LinkedList reverse by IteratorListV1 variant: ");
+        while(iteratorV1FromLinkedList.hasNext())
+        {
+            value = (String)iteratorV1FromLinkedList.next();
+            System.out.println(value + " ");
         }
-        IteratorListV2<String> it_array_v2 = new IteratorListV2<String> (array);
-        IteratorListV2<String> it_link_v2 = new IteratorListV2<String> (link);
 
-        System.out.println("Array reverse two variant: ");
-        while (it_array_v2.hasNext()) {
-            String word3 = it_array_v2.next();
-            System.out.println(word3 + " ");
+        IteratorListV2<String> iteratorV2FromArrayList = new IteratorListV2<String> (arrayList);
+        IteratorListV2<String> iteratorV2FromLinkedList = new IteratorListV2<String> (linkedList);
+
+        System.out.println("ArrayList reverse by IteratorListV2 variant: ");
+        while (iteratorV2FromArrayList.hasNext()) {
+            value = iteratorV2FromArrayList.next();
+            System.out.println(value + " ");
         }
-        System.out.println("Linked reverse two variant: ");
-        while (it_link_v2.hasNext()) {
-            String word4 = it_link_v2.next();
-            System.out.println(word4 + " ");
 
+        System.out.println("LinkedList reverse by IteratorListV2 variant: ");
+        while(iteratorV2FromLinkedList.hasNext())
+        {
+            value = iteratorV2FromLinkedList.next();
+            System.out.println(value + " ");
         }
     }
 }

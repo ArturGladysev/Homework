@@ -1,7 +1,6 @@
 package Refactoring;
 
-public interface Command {
-
-   public void excute(Tractor tractor);
-
+public interface Command
+{
+   void execute(Tractor tractor);
 }
